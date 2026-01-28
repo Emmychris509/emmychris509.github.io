@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graphic Design | CHRIS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ================= 1. CORE STYLES ================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: #ffffff;
+      color: #111;
+      overflow-x: hidden;
+      opacity: 0;
+      animation: fadeInPage 0.8s ease forwards;
+    }
+
+    @keyframes fadeInPage { to { opacity: 1; } }
+
+    #dust-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* NAV */
+    .nav {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 20px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-logo { font-weight: 600; font-size: 20px; letter-spacing: 1px; }
+    .nav-links { list-style: none; display: flex; gap: 30px; }
+    .nav-links a { text-decoration: none; color: #111; font-size: 13px; text-transform: uppercase; opacity: 0.6; transition: 0.3s; }
+    .nav-links a.active { opacity: 1; font-weight: 600; }
+
+    /* HEADER */
+    .page-header {
+      padding: 150px 20px 40px;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    .page-header h1 { font-size: 3rem; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 10px; }
+
+    /* ================= 2. TAB SYSTEM STYLES ================= */
+    .tab-container {
+      text-align: center;
+      margin-bottom: 60px;
+      position: relative;
+      z-index: 10;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 10px 25px;
+      font-family: 'Raleway', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 11px;
+      cursor: pointer;
+      color: #999;
+      transition: 0.3s;
+      margin: 0 5px;
+      outline: none;
+    }
+    .tab-btn.active {
+      color: #000;
+      font-weight: 600;
+      border-bottom: 2px solid #000;
+    }
+    .tab-content {
+      display: none;
+      animation: tabFade 0.5s ease forwards;
+    }
+    .tab-content.active { display: block; }
+
+    @keyframes tabFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ================= 3. GRID & CARDS ================= */
+    .portfolio-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 100px;
+      position: relative;
+      z-index: 10;
+    }
+    .art-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 30px;
+    }
+    .art-card {
+      position: relative;
+      aspect-ratio: 1 / 1; /* Clean squares for Design */
+      background: #f4f4f4;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+    }
+    .art-card:hover { transform: translateY(-10px); }
+    .art-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s ease; }
+    .art-card:hover img { transform: scale(1.05); }
+
+    .art-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; padding: 25px; opacity: 0; transition: 0.4s ease; color: #fff;
+    }
+    .art-card:hover .art-overlay { opacity: 1; }
+    .art-overlay h3 { font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #fff; padding: 12px 24px; }
+
+    /* ================= 4. LIGHTBOX ================= */
+    .lightbox {
+      position: fixed; inset: 0;
+      background: rgba(255, 255, 255, 0.98);
+      z-index: 2000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img { 
+      max-width: 95%; 
+      max-height: 85vh; 
+      object-fit: contain; 
+      box-shadow: 0 40px 100px rgba(0,0,0,0.15); 
+      animation: zoomIn 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+    }
+    
+    @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    .close-btn { position: absolute; top: 30px; right: 30px; font-size: 40px; cursor: pointer; color: #000; font-weight: 200; }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(30px); transition: 1s ease-out; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    footer { padding: 60px; text-align: center; font-size: 11px; letter-spacing: 2px; color: #bbb; text-transform: uppercase; }
+
+    @media (max-width: 768px) {
+  /* 1. Shrink the entire bar's height */
+  .nav-inner {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 15px !important; /* Reduced from 20px/15px to 10px */
+    gap: 5px !important;           /* Reduced space between CHRIS and the links */
+  }
+
+  .nav-logo {
+    margin-bottom: 0 !important;   /* Removed the bottom margin */
+    font-size: 16px !important;
+  }
+
+  /* 2. Tighten the Grid */
+  .nav-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 2px 20px !important;      /* Reduced vertical gap from 10px to 2px */
+    text-align: center;
+  }
+
+  /* THE MISSING PIECE: This fixes your font size */
+/* Consistent Hover */
+    .nav-links a:hover { opacity: 1; }
+
+    /* Active Link for Contact */
+    .nav-links a.active { opacity: 1; font-weight: 700; }
+      .nav-links a {
+        font-size: 11px !important; 
+        padding: 6px 0 !important;
+        display: block !important;
+        letter-spacing: 1px !important;
+      }
+
+      /* THE PADDING FIX: Pushes "Graphic Design" below the menu */
+      .page-header {
+        padding-top: 140px !important; 
+      }
+  </style>
+</head>
+<body>
+
+  <canvas id="dust-canvas"></canvas>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-logo">CHRIS</div>
+      <ul class="nav-links">
+  <li><a href="index.html">Home</a></li>
+  <li><a href="digital-art.html">Art</a></li>
+  <li><a href="graphic-design.html">Design</a></li>
+  <li><a href="logos.html">Logos</a></li>
+  <li><a href="photo-edits.html">Edits</a></li>
+  <li><a href="contact.html">Contact</a></li>
+</ul>
+    </div>
+  </nav>
+
+  <header class="page-header reveal">
+    <h1>Graphic Design</h1>
+    <p>Visual storytelling and brand architecture.</p>
+  </header>
+
+  <section class="portfolio-section">
+    
+    <div class="tab-container reveal">
+      <button id="btn-featured" class="tab-btn active" onclick="openTab('featured')">Featured Works</button>
+      <button id="btn-all" class="tab-btn" onclick="openTab('all')">View All Portfolio</button>
+    </div>
+
+    <div id="featured" class="tab-content active">
+      <div class="art-grid">
+        <div class="art-card reveal" onclick="openLightbox('images/design7.jpg')">
+          <img src="images/design7.jpg" alt="Design 1"><div class="art-overlay"><h3>Featured Project 01</h3></div>
+        </div>
+        <div class="art-card reveal" onclick="openLightbox('images/design15.jpg')">
+          <img src="images/design15.jpg" alt="Design 2"><div class="art-overlay"><h3>Featured Project 02</h3></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="all" class="tab-content">
+      <div class="art-grid">
+        <div class="art-card" onclick="openLightbox('images/design1.jpg')"><img src="images/design1.jpg" alt="Design 1"><div class="art-overlay"><h3>Project 01</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design2.jpg')"><img src="images/design2.jpg" alt="Design 2"><div class="art-overlay"><h3>Project 02</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design3.jpg')"><img src="images/design3.jpg" alt="Design 3"><div class="art-overlay"><h3>Project 03</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design4.jpg')"><img src="images/design4.jpg" alt="Design 4"><div class="art-overlay"><h3>Project 04</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design5.jpg')"><img src="images/design5.jpg" alt="Design 5"><div class="art-overlay"><h3>Project 05</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design6.jpg')"><img src="images/design6.jpg" alt="Design 6"><div class="art-overlay"><h3>Project 06</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design7.jpg')"><img src="images/design7.jpg" alt="Design 7"><div class="art-overlay"><h3>Project 07</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design8.jpg')"><img src="images/design8.jpg" alt="Design 8"><div class="art-overlay"><h3>Project 08</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design9.jpg')"><img src="images/design9.jpg" alt="Design 9"><div class="art-overlay"><h3>Project 09</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design10.jpg')"><img src="images/design10.jpg" alt="Design 10"><div class="art-overlay"><h3>Project 10</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design11.jpg')"><img src="images/design11.jpg" alt="Design 11"><div class="art-overlay"><h3>Project 11</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design12.jpg')"><img src="images/design12.jpg" alt="Design 12"><div class="art-overlay"><h3>Project 12</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design13.jpg')"><img src="images/design13.jpg" alt="Design 13"><div class="art-overlay"><h3>Project 13</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design14.jpg')"><img src="images/design14.jpg" alt="Design 14"><div class="art-overlay"><h3>Project 14</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design15.jpg')"><img src="images/design15.jpg" alt="Design 15"><div class="art-overlay"><h3>Project 15</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design16.jpg')"><img src="images/design16.jpg" alt="Design 16"><div class="art-overlay"><h3>Project 16</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design17.jpg')"><img src="images/design17.jpg" alt="Design 17"><div class="art-overlay"><h3>Project 17</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design18.jpg')"><img src="images/design18.jpg" alt="Design 18"><div class="art-overlay"><h3>Project 18</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design19.jpg')"><img src="images/design19.jpg" alt="Design 19"><div class="art-overlay"><h3>Project 19</h3></div></div>
+        <div class="art-card" onclick="openLightbox('images/design20.jpg')"><img src="images/design20.jpg" alt="Design 20"><div class="art-overlay"><h3>Project 20</h3></div></div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="close-btn">&times;</span>
+    <img id="lightbox-img" src="" alt="Full View">
+  </div>
+
+  <footer>© 2025 EMMY CHRIS</footer>
+
+  <script>
+    // 1. TAB LOGIC
+    function openTab(tabName) {
+      // Hide all contents
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      // Remove active class from buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      // Show clicked tab & set button active
+      document.getElementById(tabName).classList.add('active');
+      document.getElementById('btn-' + tabName).classList.add('active');
+      
+      // Re-trigger scroll reveal for hidden items
+      setTimeout(() => {
+        const items = document.getElementById(tabName).querySelectorAll('.art-card');
+        items.forEach(item => item.classList.add('active'));
+      }, 50);
+    }
+
+    // 2. LIGHTBOX
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+    function openLightbox(src) { lbImg.src = src; lb.classList.add('active'); document.body.style.overflow = 'hidden'; }
+    function closeLightbox() { lb.classList.remove('active'); document.body.style.overflow = 'auto'; }
+
+    // 3. DUST PHYSICS (Black Gravity-to-Hover)
+    const canvas = document.getElementById("dust-canvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; particles.forEach(p => p.setDeck()); }
+    window.addEventListener("resize", resize); resize();
+    const mouse = { x: -1000, y: -1000 };
+    window.addEventListener("mousemove", (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener("touchmove", (e) => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = Math.random() * 2 + 1;
+        this.alpha = Math.random() * 0.5 + 0.2;
+        this.setDeck();
+      }
+      setDeck() { this.deckY = canvas.height - (Math.random() * 80 + 20); }
+      update() {
+        const dx = mouse.x - this.x; const dy = mouse.y - this.y; const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 120) { const force = (120 - dist) / 120; this.vx -= (dx / dist) * force * 5; this.vy -= (dy / dist) * force * 5; }
+        if (this.y < this.deckY) { this.vy += 0.12; } 
+        else { this.vy *= 0.85; this.vy += (Math.random() - 0.5) * 0.2; this.vx += (Math.random() - 0.5) * 0.1; }
+        this.x += this.vx; this.y += this.vy; this.vx *= 0.97; if (this.y >= this.deckY) this.vy *= 0.97;
+        if (this.x < 0) this.x = canvas.width; if (this.x > canvas.width) this.x = 0;
+        if (this.y > canvas.height + 60) this.y = this.deckY;
+      }
+      draw() { ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+    }
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+    function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+    animate();
+
+    // 4. REVEAL OBSERVER
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

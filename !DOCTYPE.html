@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chris | Prototype Test</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ================= CSS STYLES ================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: #fff;
+      color: #111;
+      overflow-x: hidden;
+      /* TRANSITION SETTINGS */
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+
+    /* The class that hides the page initially */
+    body.hidden { opacity: 0; }
+
+    /* NAV */
+    .nav {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(5px);
+      border-bottom: 1px solid #eee;
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 20px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-logo { font-weight: 800; font-size: 20px; text-transform: uppercase; }
+    .nav-links { list-style: none; display: flex; gap: 20px; }
+    .nav-links a { text-decoration: none; color: #333; font-size: 14px; transition: 0.3s; }
+    .nav-links a:hover { color: #000; font-weight: 600; }
+
+    /* HERO - Using a Grey Placeholder for testing */
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background-color: #f4f4f4; /* Placeholder color */
+      overflow: hidden;
+    }
+    
+    .hero-content {
+      z-index: 2;
+      text-align: center;
+      animation: fadeUp 1.2s ease forwards;
+    }
+
+    .hero h1 { font-size: 4rem; letter-spacing: -2px; margin-bottom: 10px; }
+    .hero p { font-size: 1.2rem; color: #555; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* GRID PREVIEW (For your new pages) */
+    .section { padding: 80px 20px; max-width: 1100px; margin: auto; }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      z-index: 2; /* Keep above dust */
+      position: relative;
+    }
+
+    /* CANVAS FOR DUST */
+    #dust-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; /* Let mouse click through */
+      z-index: 0; /* Behind everything */
+    }
+  </style>
+</head>
+
+<body class="hidden">
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-logo">Chris</div>
+      <ul class="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Digital Art</a></li>
+        <li><a href="#">Graphic Design</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Emmy Chris</h1>
+      <p>Move your mouse to stir the dust.</p>
+      <p style="font-size: 0.8rem; margin-top:20px;">(Click any link to test fade-out)</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>My Portfolio</h2>
+    <div class="card-grid">
+      <div class="card">Card 1</div>
+      <div class="card">Card 2</div>
+      <div class="card">Card 3</div>
+    </div>
+  </section>
+
+  <script>
+    /* ================= JS LOGIC ================= */
+    
+    // 1. PAGE TRANSITION LOGIC
+    document.addEventListener("DOMContentLoaded", () => {
+      // Fade In
+      document.body.classList.remove("hidden");
+
+      // Link Logic
+      const links = document.querySelectorAll("a");
+      links.forEach(link => {
+        link.addEventListener("click", e => {
+          e.preventDefault();
+          // Fade Out
+          document.body.classList.add("hidden");
+          
+          // Mimic page load delay for testing
+          setTimeout(() => {
+            // In a real site, this would go to the new URL
+            // For this test, we just fade back in so you see it works
+            document.body.classList.remove("hidden"); 
+            console.log("Navigated!");
+          }, 500);
+        });
+      });
+    });
+
+    // 2. PARTICLE SYSTEM
+    const canvas = document.createElement("canvas");
+    canvas.id = "dust-canvas";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+
+    let particles = [];
+    const PARTICLE_COUNT = 150; 
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    // Mouse State
+    const mouse = { x: -1000, y: -1000, isMoving: false };
+    let mouseTimer;
+
+    window.addEventListener("mousemove", e => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.isMoving = true;
+      
+      clearTimeout(mouseTimer);
+      mouseTimer = setTimeout(() => {
+        mouse.isMoving = false;
+      }, 100);
+    });
+
+    class Particle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        this.x = Math.random() * canvas.width;
+        this.y = initial ? Math.random() * canvas.height : canvas.height + 10;
+        this.size = Math.random() * 3 + 1; // Larger for visibility
+        this.weight = Math.random() * 1 + 0.5;
+        this.color = `rgba(0, 0, 0, ${Math.random() * 0.15 + 0.05})`; // Visible grey
+      }
+
+      update() {
+        // GRAVITY (Fall down if mouse not moving)
+        if (!mouse.isMoving) {
+          this.y += this.weight;
+        } 
+        // WIND (Raise up if mouse is moving nearby)
+        else {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 150) {
+            const force = (150 - distance) / 150;
+            const directionX = dx / distance;
+            
+            this.x -= directionX * force * 5; // Move away from mouse
+            this.y -= 4; // Lift UP against gravity
+          } else {
+            this.y += this.weight; // Fall if far from mouse
+          }
+        }
+
+        // Loop smoothly
+        if (this.y > canvas.height + 20) {
+           this.y = -10; // Wrap to top
+           this.x = Math.random() * canvas.width;
+        }
+        if (this.y < -20) {
+            this.y = canvas.height + 10; // Wrap to bottom
+        }
+      }
+
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      particles = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+  </script>
+</body>
+</html>

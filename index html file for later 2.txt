@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHRIS | Brand Designer & Concept Artist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ================= 1. DESKTOP STYLES (The Default) ================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: #ffffff;
+      color: #111;
+      overflow-x: hidden;
+      opacity: 0;
+      animation: fadeInPage 0.8s ease forwards;
+    }
+
+    @keyframes fadeInPage { to { opacity: 1; } }
+
+    #dust-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .nav {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 20px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-logo { font-weight: 600; font-size: 20px; letter-spacing: 1px; }
+    .nav-links { list-style: none; display: flex; gap: 30px; }
+    .nav-links a { text-decoration: none; color: #111; font-size: 13px; text-transform: uppercase; opacity: 0.6; }
+    .nav-links a.active { opacity: 1; font-weight: 600; }
+
+    .hero {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; 
+    }
+    .hero img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      object-fit: cover; 
+      object-position: left center;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      margin-right: 10%; 
+      text-align: right;
+      opacity: 0;
+      animation: fadeUp 1.2s ease forwards;
+      animation-delay: 0.3s;
+    }
+    .hero h1 { font-size: 4.5rem; line-height: 1; margin-bottom: 10px; }
+    .hero p { font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase; color: #555; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section { position: relative; z-index: 10; max-width: 900px; margin: auto; padding: 120px 20px; text-align: center; }
+    .reveal { opacity: 0; transform: translateY(30px); transition: 1s ease; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+    footer { padding: 50px; text-align: center; font-size: 12px; color: #999; }
+
+    /* ================= 2. MOBILE OVERRIDES (FIXED) ================= */
+    @media (max-width: 768px) {
+      .nav-inner { padding: 15px 20px; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 10px; }
+
+      .hero { 
+        justify-content: center; 
+        height: 85vh; 
+      }
+      .hero img {
+        object-position: 25% center; /* Adjusts your character focal point */
+      }
+      .hero-content {
+        margin-right: 0; 
+        text-align: center; 
+        background: rgba(255,255,255,0.4); 
+        padding: 20px;
+        width: 85%;
+        backdrop-filter: blur(4px);
+      }
+      .hero h1 { font-size: 2.5rem; }
+      .hero p { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="dust-canvas"></canvas>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-logo">CHRIS</div>
+      <ul class="nav-links">
+  <li><a href="index.html" class="active">Home</a></li>
+  <li><a href="digital-art.html">Art</a></li>
+  <li><a href="graphic-design.html">Design</a></li>
+  <li><a href="logos.html">Logos</a></li>
+  <li><a href="photo-edits.html">Edits</a></li>
+  <li><a href="contact.html">Contact</a></li> </ul>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <img src="images/hero.jpg" alt="Hero"> 
+    <div class="hero-content">
+      <h1>Emmy Chris</h1>
+      <p>Brand Designer & Concept Artist</p>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <h2>About Me</h2>
+    <p>Brand designer and concept artist.
+ I design visual identities and conceptual systems that communicate clearly,
+    feel human, and scale with purpose. My work sits at the intersection of
+    strategy, aesthetics, and storytelling.
+</p>
+  </section>
+
+  <footer>© 2025 EMMY CHRIS</footer>
+
+  <script>
+    const canvas = document.getElementById("dust-canvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      // Refresh particle deck positions on resize
+      particles.forEach(p => p.setDeck());
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    const mouse = { x: -1000, y: -1000 };
+    const updateMouse = (x, y) => { mouse.x = x; mouse.y = y; };
+    window.addEventListener("mousemove", (e) => updateMouse(e.clientX, e.clientY));
+    window.addEventListener("touchstart", (e) => updateMouse(e.touches[0].clientX, e.touches[0].clientY));
+    window.addEventListener("touchmove", (e) => updateMouse(e.touches[0].clientX, e.touches[0].clientY));
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height; // Start above screen
+        this.size = Math.random() * 2 + 0.5;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = Math.random() * 2 + 1;
+        this.alpha = Math.random() * 0.5 + 0.2;
+        this.setDeck();
+      }
+
+      setDeck() {
+        // Particles hover in the bottom 80-100 pixels of the current view
+        this.deckY = canvas.height - (Math.random() * 80 + 20);
+      }
+
+      update() {
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        
+        if (dist < 120) {
+          const force = (120 - dist) / 120;
+          this.vx -= (dx / dist) * force * 5;
+          this.vy -= (dy / dist) * force * 5;
+        }
+
+        if (this.y < this.deckY) {
+            this.vy += 0.12; // Gravity
+        } else {
+            // Hover logic
+            this.vy *= 0.85; 
+            this.vy += (Math.random() - 0.5) * 0.25; 
+            this.vx += (Math.random() - 0.5) * 0.15;
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= 0.97;
+        if (this.y >= this.deckY) this.vy *= 0.97;
+
+        if (this.x < 0) this.x = canvas.width;
+        if (this.x > canvas.width) this.x = 0;
+        
+        // Safety wrap: if pushed too far down or up, return to deck
+        if (this.y > canvas.height + 100 || this.y < -canvas.height - 100) {
+            this.y = this.deckY;
+            this.vy = 0;
+        }
+      }
+
+      draw() {
+        ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+<canvas id="wave-canvas" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 250px; z-index: 999; pointer-events: none;"></canvas>
+
+<script>
+  const waveCanvas = document.getElementById('wave-canvas');
+  const wctx = waveCanvas.getContext('2d');
+  let points = [];
+  const numPoints = 45; // Increased for higher resolution smoothness
+  let waveMouse = { x: -1000, y: -1000 };
+  let time = 0;
+
+  window.addEventListener('mousemove', (e) => {
+    waveMouse.x = e.clientX;
+    waveMouse.y = e.clientY;
+  });
+
+  window.addEventListener('touchmove', (e) => {
+    waveMouse.x = e.touches[0].clientX;
+    waveMouse.y = e.touches[0].clientY;
+  });
+
+  function initWave() {
+    waveCanvas.width = window.innerWidth;
+    waveCanvas.height = 250;
+    points = [];
+    const spacing = waveCanvas.width / (numPoints - 1);
+    for (let i = 0; i < numPoints; i++) {
+      points.push({
+        x: i * spacing,
+        y: 150, 
+        originalY: 150,
+        vy: 0,
+        tension: 0.03, // Controls how "water-like" the surface is
+        damping: 0.92  // Controls how long the ripples last
+      });
+    }
+  }
+
+  function animateWave() {
+    wctx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
+    time += 0.015;
+
+    // 1. PHYSICS PHASE
+    for (let i = 0; i < points.length; i++) {
+      let p = points[i];
+      
+      // Idle rhythmic wave motion
+      let idle = Math.sin(time + (i * 0.2)) * 15;
+      let targetY = p.originalY + idle;
+
+      // Mouse Interaction - "The Dip"
+      let canvasTop = window.innerHeight - 250;
+      let mouseRelY = waveMouse.y - canvasTop;
+      let dx = waveMouse.x - p.x;
+      let dy = mouseRelY - p.y;
+      let dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < 120) {
+        let force = (120 - dist) / 120;
+        // Pushes the surface smoothly
+        p.vy += force * 8; 
+      }
+
+      // Spring to target
+      let diff = targetY - p.y;
+      p.vy += diff * p.tension;
+      p.y += p.vy;
+      p.vy *= p.damping;
+    }
+
+    // 2. SMOOTHING PHASE (Surface Tension)
+    // This part prevents sharp angles by averaging neighbors
+    for (let i = 0; i < points.length; i++) {
+      if (i > 0 && i < points.length - 1) {
+        // Points pull their neighbors slightly to stay "rounded"
+        points[i].y = (points[i-1].y + points[i+1].y + points[i].y) / 3;
+      }
+    }
+
+    // 3. DRAWING PHASE (Bezier Curves)
+    wctx.beginPath();
+    wctx.moveTo(0, waveCanvas.height);
+    wctx.lineTo(0, points[0].y);
+
+    for (let i = 0; i < points.length - 1; i++) {
+      // Quadratic Bezier through midpoints ensures NO sharp angles
+      const xc = (points[i].x + points[i + 1].x) / 2;
+      const yc = (points[i].y + points[i + 1].y) / 2;
+      wctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+    }
+
+    wctx.lineTo(waveCanvas.width, points[points.length - 1].y);
+    wctx.lineTo(waveCanvas.width, waveCanvas.height);
+    wctx.closePath();
+
+    // Purple Gradient Styling
+    let gradient = wctx.createLinearGradient(0, 50, 0, 250);
+    gradient.addColorStop(0, 'rgba(160, 40, 255, 0.65)'); // Glowy Purple
+    gradient.addColorStop(0.6, 'rgba(100, 0, 200, 0.2)'); 
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');      
+    
+    wctx.fillStyle = gradient;
+    wctx.fill();
+
+    // Highlighting the surface edge for that "glow"
+    wctx.strokeStyle = 'rgba(200, 150, 255, 0.4)';
+    wctx.lineWidth = 1.5;
+    wctx.stroke();
+
+    requestAnimationFrame(animateWave);
+  }
+
+  window.addEventListener('resize', initWave);
+  initWave();
+  animateWave();
+</script>
+<button id="backToTop" class="back-to-top" title="Go to top">↑</button>
+</body>
+</html>

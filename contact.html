@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONTACT | CHRIS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ================= BASE STYLES ================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: #ffffff;
+      color: #111;
+      overflow-x: hidden;
+    }
+
+    #dust-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+
+    .nav {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .nav-inner { max-width: 1200px; margin: 0 auto; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+    .nav-logo { font-weight: 600; font-size: 20px; letter-spacing: 1px; }
+    .nav-links { list-style: none; display: flex; gap: 30px; }
+    .nav-links a { text-decoration: none; color: #111; font-size: 13px; text-transform: uppercase; opacity: 0.6; }
+    .nav-links a:hover { opacity: 1; }
+
+    .contact-hero {
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .contact-hero h1 { font-size: 4rem; margin-bottom: 20px; letter-spacing: -2px; }
+    .contact-hero p { font-size: 1.2rem; max-width: 600px; color: #555; margin-bottom: 40px; }
+
+    /* ================= BUTTON RECTANGLES ================= */
+    .contact-grid {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .contact-rect {
+      text-decoration: none;
+      color: #111;
+      border: 1px solid #111;
+      padding: 20px 50px;
+      min-width: 200px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      background: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* WhatsApp Hover */
+    .btn-whatsapp:hover {
+      background: #25D366;
+      color: #fff;
+      border-color: #25D366;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(37, 211, 102, 0.2);
+    }
+
+    /* Email Hover - Google Multi-color Strip */
+    .btn-email:hover {
+      background: #fdfdfd;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      /* This creates the 4-color stripe at the bottom */
+      border-bottom: 4px solid transparent;
+      border-image: linear-gradient(to right, #4285F4 25%, #EA4335 25%, #EA4335 50%, #FBBC05 50%, #FBBC05 75%, #34A853 75%);
+      border-image-slice: 1;
+    }
+
+    /* Instagram Hover - Gradient */
+    .btn-instagram:hover {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      color: #fff;
+      border-color: transparent;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(220, 39, 67, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      /* 1. Tighten the Navigation Bar */
+      .nav-inner {
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 10px 15px !important;
+        gap: 5px !important;
+      }
+
+      .nav-logo {
+        margin: 0 0 5px 0 !important;
+        font-size: 16px !important;
+      }
+
+      /* 2. Create the 2-Column Grid */
+      .nav-links {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        width: 100% !important;
+        gap: 5px 15px !important; /* Tiny vertical gap, comfortable horizontal gap */
+        text-align: center;
+      }
+
+      .nav-links a {
+        font-size: 11px !important;
+        padding: 4px 0 !important;
+        display: block;
+        letter-spacing: 0px !important;
+      }
+
+      /* 3. Pull Content Up (Prevents huge white gaps) */
+      .page-header, .hero {
+        padding-top: 80px !important; 
+      }
+      
+      .hero-content {
+        margin-right: 5% !important;
+        text-align: center !important;
+      }
+
+      .hero h1 { font-size: 2.5rem !important; }
+
+      /* 4. Stack Grid items (Portfolio/Contact) */
+      .art-grid, .portfolio-grid, .contact-grid {
+        grid-template-columns: 1fr !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+      }
+      
+      .contact-rect { width: 100% !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="dust-canvas"></canvas>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-logo">CHRIS</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="digital-art.html">Art</a></li>
+        <li><a href="graphic-design.html">Design</a></li>
+        <li><a href="logos.html">Logos</a></li>
+        <li><a href="photo-edits.html">Edits</a></li>
+        <li><a href="contact.html" style="opacity: 1; font-weight: 600;">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="contact-hero">
+    <h1>Get in Touch</h1>
+    <p>Available for freelance projects, concept art, and brand identity systems.</p>
+    
+    <div class="contact-grid">
+      <a href="https://wa.me/2348148179861" target="_blank" class="contact-rect btn-whatsapp">WhatsApp</a>
+      <a href="mailto:Emmy.chris.508@gmail.com" class="contact-rect btn-email">Email</a>
+      <a href="https://instagram.com/officialemmychrisart" target="_blank" class="contact-rect btn-instagram">Instagram</a>
+    </div>
+  </section>
+
+  <canvas id="wave-canvas" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 250px; z-index: 9; pointer-events: none;"></canvas>
+
+  <script>
+    /* PASTE YOUR DUST PARTICLE SCRIPT FROM INDEX.HTML HERE */
+  </script>
+  
+  <script>
+    /* PASTE YOUR WAVE CANVAS SCRIPT FROM INDEX.HTML HERE */
+  </script>
+
+</body>
+</html>
